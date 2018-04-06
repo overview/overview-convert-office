@@ -11,7 +11,7 @@ RUN set -x \
 WORKDIR /app
 
 
-FROM overview/overview-convert-framework:0.0.11 AS framework
+FROM overview/overview-convert-framework:0.0.12 AS framework
 # multi-stage build
 
 
