@@ -1,0 +1,38 @@
+#!/bin/sh
+
+set -e
+#set -x
+
+TIMEOUT=45
+SOFFICE=/usr/lib/libreoffice/program/soffice.bin
+PROFILE_DIR=/tmp/soffice-profile
+CMD="$SOFFICE --quickstart=no --headless --nologo --invisible --norestore --nolockcheck -env:UserInstallation=file://$PROFILE_DIR"
+
+if [ ! -d "$PROFILE_DIR" ]; then
+  $CMD || case "$?" in
+    81)
+      # What we wanted
+      ;;
+    **)
+      echo "LibreOffice exited with code $? while initializing profile directory"
+      exit 0 # We finished successfully, outputting a great error message
+      ;;
+  esac
+fi
+
+timeout -t $TIMEOUT -s KILL $CMD --convert-to pdf --outdir . input.blob >&2 || case "$?" in
+  143)
+    echo "LibreOffice timed out"
+    rm -rf "$PROFILE_DIR"
+    exit 0
+    ;;
+  **)
+    echo "LibreOffice exited with code $?"
+    rm -rf "$PROFILE_DIR"
+    exit 0
+    ;;
+esac
+
+mv input.pdf 0.blob
+
+echo "$1" | jq '{ filename: .filename, languageCode: .languageCode, wantOcr: false, wantSplitByPage: .wantSplitByPage, contentType: "application/pdf", metadata: .metadata }' > 0.json

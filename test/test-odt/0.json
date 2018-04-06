@@ -1,0 +1,10 @@
+{
+  "filename": "input.odt",
+  "languageCode": "en",
+  "wantOcr": false,
+  "wantSplitByPage": true,
+  "contentType": "application/pdf",
+  "metadata": {
+    "foo": "bar"
+  }
+}
