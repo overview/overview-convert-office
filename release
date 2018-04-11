@@ -2,13 +2,13 @@
 
 DIR="$(dirname "$0")"
 
-if (cd "$DIR" && git status --short | grep -E '.'); then
-  echo "You have unsaved changes. Please git commit or reset them and run this again." >&2
+if [ -n "$(echo "v$1" | sed -e 's/v[0-9]\+\.[0-9]\+\.[0-9]\+//')" ]; then
+  echo "Usage: $0 VERSION, where VERSION is like '1.0.0'" >&2
   exit 1
 fi
 
-if [ -n "$(echo "v$1" | sed -e 's/v[0-9]*\.[0-9]*\.[0-9]//')" ]; then
-  echo "Usage: $0 VERSION, where VERSION is like '1.0.0'" >&2
+if (cd "$DIR" && git status --short | grep -E '.'); then
+  echo "You have unsaved changes. Please git commit or reset them and run this again." >&2
   exit 1
 fi
 
