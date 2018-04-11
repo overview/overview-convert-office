@@ -21,13 +21,16 @@ if [ ! -d "$PROFILE_DIR" ]; then
 fi
 
 timeout -t $TIMEOUT -s KILL $CMD --convert-to pdf --outdir . input.blob >&2 || case "$?" in
-  143)
+  137)
     echo "LibreOffice timed out"
+    echo "LibreOffice timed out" >&2
     rm -rf "$PROFILE_DIR"
     exit 0
     ;;
   **)
-    echo "LibreOffice exited with code $?"
+    RETVAL="$?"
+    echo "LibreOffice exited with code $RETVAL"
+    echo "LibreOffice exited with code $RETVAL" >&2
     rm -rf "$PROFILE_DIR"
     exit 0
     ;;
