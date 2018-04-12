@@ -1,0 +1,10 @@
+{
+  "filename": "foo/bar.csv",
+  "languageCode": "en",
+  "wantOcr": false,
+  "wantSplitByPage": true,
+  "contentType": "application/pdf",
+  "metadata": {
+    "foo": "bar"
+  }
+}

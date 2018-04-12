@@ -20,7 +20,25 @@ if [ ! -d "$PROFILE_DIR" ]; then
   esac
 fi
 
-timeout -t $TIMEOUT -s KILL $CMD --convert-to pdf --outdir . input.blob >&2 || case "$?" in
+# Give `input.blob` the correct file extension, if we can. "input.csv" means
+# something different than "input.txt", even if contents are identical.
+INPUT_FILENAME="$(echo "$1" | jq -r .filename)"
+INPUT_EXTENSION_UNSAFE="${INPUT_FILENAME##*.}"
+# INPUT_EXTENSION_UNSAFE may have slashes or other evil characters
+case "$INPUT_EXTENSION_UNSAFE" in
+  [A-Za-z0-9][A-Za-z0-9]*)
+    # The extension is safe: rename input.blob
+    INPUT_BLOB="input.$INPUT_EXTENSION_UNSAFE"
+    mv input.blob $INPUT_BLOB
+    ;;
+  *)
+    # The extension isn't a valid file extension. Let LibreOffice do its own
+    # file type detection from the ".blob" extension.
+    INPUT_BLOB="input.blob"
+    ;;
+esac
+
+timeout -t $TIMEOUT -s KILL $CMD --convert-to pdf --outdir . "$INPUT_BLOB" >&2 || case "$?" in
   137)
     echo "LibreOffice timed out"
     echo "LibreOffice timed out" >&2
