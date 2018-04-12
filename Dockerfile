@@ -26,7 +26,7 @@ CMD [ "tini", "--", "/app/run" ]
 FROM base AS test
 COPY --from=framework /app/test-convert-single-file /app/
 COPY test/ /app/test/
-ENV TIMEOUT 3
+ENV TIMEOUT 5
 RUN [ "/app/test-convert-single-file" ]
 CMD [ "true" ]
 
