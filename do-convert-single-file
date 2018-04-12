@@ -3,7 +3,7 @@
 set -e
 #set -x
 
-TIMEOUT=90
+: "${TIMEOUT:=90}"
 SOFFICE=/usr/lib/libreoffice/program/soffice.bin
 PROFILE_DIR=/tmp/soffice-profile
 CMD="$SOFFICE --quickstart=no --headless --nologo --invisible --norestore --nolockcheck -env:UserInstallation=file://$PROFILE_DIR"

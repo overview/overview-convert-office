@@ -1,0 +1,8 @@
+{
+  "filename": "foo/bar.csv",
+  "contentType": "application/octet-stream",
+  "languageCode": "en",
+  "wantOcr": true,
+  "wantSplitByPage": true,
+  "metadata": { "foo": "bar" }
+}
