@@ -1,4 +1,4 @@
-FROM alpine:3.7 AS os
+FROM alpine:3.11 AS os
 RUN set -x \
   && apk add --update --no-cache \
     jq \
