@@ -72,6 +72,8 @@ timeout -s KILL "$TIMEOUT" $CMD --convert-to pdf --outdir . "$INPUT_BLOB" >&2 ||
     ;;
 esac
 
+rm -rf "$PROFILE_DIR"
+
 mv input.pdf 0.blob
 
 echo "$1" | jq '{ filename: .filename, languageCode: .languageCode, wantOcr: false, wantSplitByPage: .wantSplitByPage, contentType: "application/pdf", metadata: .metadata }' > 0.json
