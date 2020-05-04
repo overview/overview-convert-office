@@ -55,8 +55,7 @@ case "$INPUT_EXTENSION_UNSAFE" in
     ;;
 esac
 
-# shellcheck disable=SC2086
-timeout -s KILL "$TIMEOUT" $CMD --convert-to pdf --outdir . "$INPUT_BLOB" >&2 || case "$?" in
+timeout -s KILL "$TIMEOUT" /app/convert-to-pdf-with-metadata "$INPUT_BLOB" 0.blob >&2 || case "$?" in
   137)
     echo "LibreOffice timed out"
     echo "LibreOffice timed out" >&2
@@ -73,7 +72,5 @@ timeout -s KILL "$TIMEOUT" $CMD --convert-to pdf --outdir . "$INPUT_BLOB" >&2 ||
 esac
 
 rm -rf "$PROFILE_DIR"
-
-mv input.pdf 0.blob
 
 echo "$1" | jq '{ filename: .filename, languageCode: .languageCode, wantOcr: false, wantSplitByPage: .wantSplitByPage, contentType: "application/pdf", metadata: .metadata }' > 0.json

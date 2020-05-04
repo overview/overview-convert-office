@@ -7,11 +7,29 @@ This program always outputs `0.json` and `0.blob`.
 
 The output `0.json` has `wantOcr:false`.
 
-`soffice.bin` exits with status code 81 if a profile directory is missing --
-and it creates the profile directory at the same time. The whole process takes
-seconds. And if `soffice.bin` crashes, we deem the profile directory to have
-been destroyed. So we recreate the profile directory when it's missing (because
-recreating it always is so slow) and we delete it when `soffice.bin` crashes.
+These metadata fields from the input document will be written to the
+output PDF:
+
+* `Title`
+* `Author`
+* `Subject`
+* `Keywords`
+* `Creation Date`
+* `Modification Date`
+
+We use custom C++ with
+[LibreOfficeKit](https://docs.libreoffice.org/libreofficekit.html) and
+[QPDF](http://qpdf.sourceforge.net/). This is painful and janky. Here's why:
+
+* `soffice.bin` is slow to load, imposing big overhead (hence LOK).
+* `soffice.bin` does not preserve metadata when converting to PDF (hence QPDF).
+* `soffice.bin` cannot even _extract_ metadata. The only move is to convert to
+  `.odt` and then read the result as a zipfile -- costing a second invocation
+  of `soffice.bin` just to read metadata (hence _not_ using `soffice.bin`).
+
+We create the LibreOffice profile directory _once_ and reset it with every
+conversion. This is for security: once an invocation is complete, all its data
+is wiped.
 
 # Testing
 
