@@ -112,6 +112,9 @@ readMetadata(lok::Document& document)
         ouStringToStdString(xProperties->getSubject()),
         ouStringSequenceToStdString(xProperties->getKeywords()),
         dateTimeToStdStringIso8601(xProperties->getCreationDate()),
-        dateTimeToStdStringIso8601(xProperties->getModificationDate())
+        dateTimeToStdStringIso8601(xProperties->getModificationDate()),
+        ouStringToStdString(xProperties->getGenerator()),
+        ouStringToStdString(xProperties->getModifiedBy()),
+        ouStringToStdString(xProperties->getDescription()),
     };
 }

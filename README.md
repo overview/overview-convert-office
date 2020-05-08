@@ -10,12 +10,19 @@ The output `0.json` has `wantOcr:false`.
 These metadata fields from the input document will be written to the
 output PDF:
 
-* `Title`
-* `Author`
-* `Subject`
-* `Keywords`
-* `Creation Date`
-* `Modification Date`
+* `Title` (text)
+* `Author` (text)
+* `Subject` (text)
+* `Keywords` (text)
+* `Creation Date` (ISO-8601 date, either UTC or no-TZ)
+* `Modification Date` (ISO-8601 date, either UTC or no-TZ)
+* `Creator` (text -- program name that produced the document)
+
+And these metadata fields will be written to the output JSON `metadata`
+(since there is no equivalent field in PDF):
+
+* `Modified By` (akin to `Author`)
+* `Comments` (text)
 
 We use custom C++ with
 [LibreOfficeKit](https://docs.libreoffice.org/libreofficekit.html) and

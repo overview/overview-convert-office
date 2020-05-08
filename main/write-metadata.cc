@@ -59,6 +59,7 @@ setPdfFileMetadata(const std::string& pdfPath, const Metadata& metadata)
   setMetadata(info, "/Keywords", metadata.keywords);
   setMetadata(info, "/CreationDate", iso8601ToPdf(metadata.creationDate));
   setMetadata(info, "/ModDate", iso8601ToPdf(metadata.modificationDate));
+  setMetadata(info, "/Creator", metadata.creator);
 
   const std::string tmpPath = pdfPath + ".qpdf";
   QPDFWriter writer(qpdf, tmpPath.c_str());

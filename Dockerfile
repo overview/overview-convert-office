@@ -10,8 +10,20 @@ RUN set -x \
     tini \
   && update-ms-fonts \
   && fc-cache -f
-WORKDIR /app
 
+# Generate clean profile directory. soffice.bin should exit with code 81
+# on first run, when it's creating the profile directory.
+#
+# Generate the profile in its final location, in case there are any
+# absolute paths. ([2020-05-08, adamhooper] I have no idea what's in a
+# profile dir.)
+ENV PROFILE_DIR /tmp/soffice-profile
+ENV PROFILE_TEMPLATE_DIR /app/soffice-profile-template
+RUN mkdir -p /tmp /app \
+      && sh -c '/usr/lib/libreoffice/program/soffice.bin --headless --norestore --nolockcheck -env:UserInstallation=file://$PROFILE_DIR; test $? -eq 81' \
+      && mv $PROFILE_DIR $PROFILE_TEMPLATE_DIR
+
+WORKDIR /app
 
 FROM os AS build
 RUN set -x \

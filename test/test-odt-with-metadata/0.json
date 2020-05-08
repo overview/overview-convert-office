@@ -1,6 +1,7 @@
 {
+  "Comments": "These are some\n\ntext\n\ncomments (with newlines and \"quotes\").",
   "contentType": "application/pdf",
-  "filename": "foo/bar.csv",
+  "filename": "input.odt",
   "languageCode": "en",
   "metadata": {
     "foo": "bar"

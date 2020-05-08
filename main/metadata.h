@@ -14,6 +14,9 @@ struct Metadata {
     std::string keywords;
     std::string creationDate;
     std::string modificationDate;
+    std::string creator; // which application created the doc
+    std::string modifiedBy; // MS Word; no PDF support
+    std::string comments; // MS Word; no PDF support
 };
 
 

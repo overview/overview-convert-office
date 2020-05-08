@@ -3,74 +3,28 @@
 set -e
 #set -x
 
-: "${TIMEOUT:=90}"
-SOFFICE=/usr/lib/libreoffice/program/soffice.bin
-PROFILE_DIR=/tmp/soffice-profile
-PROFILE_DIR_TEMPLATE=/tmp/soffice-profile-template
-CMD="$SOFFICE --headless --norestore --nolockcheck -env:UserInstallation=file://$PROFILE_DIR"
-
-create_clean_profile_dir() {
-  # Create /tmp/soffice-profile.
-
-  # Ensure there's nothing left over from a previous invocation
+clean_evidence_of_last_lok_run() {
+  # LibreOffice might write anything to the profile directory; we don't want
+  # that to persist to the next run, as it might leak into the next output
+  # file.
   rm -rf "$PROFILE_DIR"
-
-  # On first call (since system startup), populate $PROFILE_DIR_TEMPLATE with
-  # files that look like a blank profile at location $PROFILE_DIR.
-  if [ ! -d "$PROFILE_DIR_TEMPLATE" ]; then
-    rm -rf "$PROFILE_DIR"
-    $CMD || case "$?" in
-      81)
-        # What we wanted
-        ;;
-      **)
-        echo "LibreOffice exited with code $? while initializing profile directory"
-        exit 0 # We finished successfully, outputting a great error message
-        ;;
-    esac
-    mv "$PROFILE_DIR" "$PROFILE_DIR_TEMPLATE"
-  fi
-
-  # On _every_ call, copy the template files. This ensures a fresh profile.
-  cp -a "$PROFILE_DIR_TEMPLATE" "$PROFILE_DIR"
 }
 
-create_clean_profile_dir
+: "${TIMEOUT:=90}"
+clean_evidence_of_last_lok_run  # Defensive programming. Should be no-op.
 
-# Give `input.blob` the correct file extension, if we can. "input.csv" means
-# something different than "input.txt", even if contents are identical.
-INPUT_FILENAME="$(echo "$1" | jq -r .filename)"
-INPUT_EXTENSION_UNSAFE="${INPUT_FILENAME##*.}"
-# INPUT_EXTENSION_UNSAFE may have slashes or other evil characters
-case "$INPUT_EXTENSION_UNSAFE" in
-  [A-Za-z0-9][A-Za-z0-9]*)
-    # The extension is safe: rename input.blob
-    INPUT_BLOB="input.$INPUT_EXTENSION_UNSAFE"
-    mv input.blob "$INPUT_BLOB"
-    ;;
-  *)
-    # The extension isn't a valid file extension. Let LibreOffice do its own
-    # file type detection from the ".blob" extension.
-    INPUT_BLOB="input.blob"
-    ;;
-esac
+cp -a "$PROFILE_TEMPLATE_DIR" "$PROFILE_DIR"  # Create fresh profile directory
 
-timeout -s KILL "$TIMEOUT" /app/convert-to-pdf-with-metadata "$INPUT_BLOB" 0.blob >&2 || case "$?" in
+timeout -s KILL "$TIMEOUT" /app/convert-to-pdf-with-metadata "$1" >&2 || case "$?" in
   137)
     echo "LibreOffice timed out"
     echo "LibreOffice timed out" >&2
-    rm -rf "$PROFILE_DIR"
-    exit 0
     ;;
   **)
     RETVAL="$?"
     echo "LibreOffice exited with code $RETVAL"
     echo "LibreOffice exited with code $RETVAL" >&2
-    rm -rf "$PROFILE_DIR"
-    exit 0
     ;;
 esac
 
-rm -rf "$PROFILE_DIR"
-
-echo "$1" | jq '{ filename: .filename, languageCode: .languageCode, wantOcr: false, wantSplitByPage: .wantSplitByPage, contentType: "application/pdf", metadata: .metadata }' > 0.json
+clean_evidence_of_last_lok_run  # On success or failure
