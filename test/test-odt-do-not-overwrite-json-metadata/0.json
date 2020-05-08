@@ -3,7 +3,8 @@
   "filename": "input.odt",
   "languageCode": "en",
   "metadata": {
-    "Comments": "These are some\n\ntext\n\ncomments (with newlines and \"quotes\").",
+    "Comments": "leave me alone",
+    "Modified By": "leave me alone",
     "foo": "bar"
   },
   "wantOcr": false,

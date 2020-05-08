@@ -109,13 +109,13 @@ writeOutputJson(const std::string& outputPath, const nlohmann::json& docJson, co
     // Add to metadata
     std::unordered_map<std::string, nlohmann::json> outputMetadata; // copy
     docJson["metadata"].get_to(outputMetadata);
-    outputJson["metadata"] = outputMetadata;
     if (!metadata.modifiedBy.empty()) {
-        outputJson["Modified By"] = metadata.modifiedBy;
+        outputMetadata.try_emplace("Modified By", metadata.modifiedBy);
     }
     if (!metadata.comments.empty()) {
-        outputJson["Comments"] = metadata.comments;
+        outputMetadata.try_emplace("Comments", metadata.comments);
     }
+    outputJson["metadata"] = outputMetadata;
 
     const std::string data = outputJson.dump(2); // indent helps with debugging
     std::ofstream outfile(outputPath, std::ofstream::binary);
