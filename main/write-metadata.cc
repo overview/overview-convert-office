@@ -60,6 +60,11 @@ setPdfFileMetadata(const std::string& pdfPath, const Metadata& metadata)
   setMetadata(info, "/CreationDate", iso8601ToPdf(metadata.creationDate));
   setMetadata(info, "/ModDate", iso8601ToPdf(metadata.modificationDate));
   setMetadata(info, "/Creator", metadata.creator);
+  // Overwrite /Producer so we get consistent test results to compare with.
+  // Otherwise, Docker Hub will produce different PDFs than localhost.
+  // Also, don't embed a version number, or we'll need to change our test
+  // suite every time we bump the version.
+  setMetadata(info, "/Producer", "overviewdocs.com");
 
   const std::string tmpPath = pdfPath + ".qpdf";
   QPDFWriter writer(qpdf, tmpPath.c_str());
