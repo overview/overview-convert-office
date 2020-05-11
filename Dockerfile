@@ -38,7 +38,7 @@ COPY main/ /app/main/
 RUN sh -c "cd /app/main && make -j$(nproc)"
 
 
-FROM overview/overview-convert-framework:0.0.17 AS framework
+FROM overview/overview-convert-framework:0.1.1 AS framework
 
 FROM os AS base
 WORKDIR /app
@@ -52,6 +52,7 @@ CMD [ "tini", "--", "/app/run" ]
 
 
 FROM base AS test
+RUN apk --no-cache add qpdf
 COPY --from=framework /app/test-convert-single-file /app/
 COPY test/ /app/test/
 ENV TIMEOUT 5
