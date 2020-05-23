@@ -90,11 +90,17 @@ convertToPdf(const std::string& inputPath, const std::string& pdfPath)
         abortOnOfficeError("Failed to read Office document", *office);
     }
 
+    // Read metadata _before_ saving. LibreOffice may change metadata during
+    // save.
+    //
+    // [2020-05-23, adamhooper] I can't reproduce this on localhost, but it
+    // seems like Docker Hub may be doing this.
+    Metadata metadata(readMetadata(*doc));
+
     if (!doc->saveAs(pdfPath.c_str(), "PDF")) {
         abortOnOfficeError("Failed to save as PDF", *office);
     }
 
-    Metadata metadata(readMetadata(*doc));
     setPdfFileMetadata(pdfPath, metadata);
     return metadata;
 }
