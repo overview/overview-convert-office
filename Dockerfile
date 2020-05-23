@@ -55,6 +55,13 @@ FROM base AS test
 RUN apk --no-cache add qpdf
 COPY --from=framework /app/test-convert-single-file /app/
 COPY test/ /app/test/
+# [2020-05-23, adamhooper] We have a problem on Docker Hub: this file always
+# has /CreationDate set to the current time. I'd like to detect whether the
+# date is coming from the filesystem timestamp or from LibreOffice logic.
+#
+# (Both places are wrong. The date should come from the file's
+# DocumentSummaryInformation.)
+RUN touch -t 202005110102.03 test/test-xls-from-libreoffice-6.4.3.2/input.blob
 ENV TIMEOUT 5
 RUN [ "/app/test-convert-single-file" ]
 CMD [ "true" ]
