@@ -57,8 +57,8 @@ setPdfFileMetadata(const std::string& pdfPath, const Metadata& metadata)
   setMetadata(info, "/Author", metadata.author);
   setMetadata(info, "/Subject", metadata.subject);
   setMetadata(info, "/Keywords", metadata.keywords);
-  setMetadata(info, "/CreationDate", iso8601ToPdf(metadata.creationDate));
-  setMetadata(info, "/ModDate", iso8601ToPdf(metadata.modificationDate));
+  setMetadata(info, "/CreationDate", metadata.creationDate);
+  setMetadata(info, "/ModDate", metadata.modificationDate);
   setMetadata(info, "/Creator", metadata.creator);
   // Overwrite /Producer so we get consistent test results to compare with.
   // Otherwise, Docker Hub will produce different PDFs than localhost.

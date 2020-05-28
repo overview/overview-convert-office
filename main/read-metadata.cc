@@ -50,7 +50,7 @@ ouStringSequenceToStdString(const css::uno::Sequence<rtl::OUString>& seq)
 
 
 static std::string
-dateTimeToStdStringIso8601(const css::util::DateTime& dt)
+dateTimeToStdStringPdfDate(const css::util::DateTime& dt)
 {
   if (dt.Month == 0 || dt.Day == 0) {
     // void date
@@ -59,29 +59,13 @@ dateTimeToStdStringIso8601(const css::util::DateTime& dt)
 
   std::stringstream str;
   str << std::setfill('0')
+      << "D:"
       << std::setw(4) << dt.Year
-      << '-'
       << std::setw(2) << dt.Month
-      << '-'
       << std::setw(2) << dt.Day
-      << 'T'
       << std::setw(2) << dt.Hours
-      << ':'
       << std::setw(2) << dt.Minutes
-      << ':'
       << std::setw(2) << dt.Seconds;
-
-  const auto ns = dt.NanoSeconds;
-  if (ns != 0) {
-    str << '.';
-    if (ns % 1000000 == 0) {
-      str << std::setw(3) << (ns / 1000000);
-    } else if (ns % 1000 == 0) {
-      str << std::setw(6) << (ns / 1000);
-    } else {
-      str << std::setw(9) << ns;
-    }
-  }
 
   if (dt.IsUTC) {
     str << 'Z';
@@ -111,8 +95,8 @@ readMetadata(lok::Document& document)
         ouStringToStdString(xProperties->getAuthor()),
         ouStringToStdString(xProperties->getSubject()),
         ouStringSequenceToStdString(xProperties->getKeywords()),
-        dateTimeToStdStringIso8601(xProperties->getCreationDate()),
-        dateTimeToStdStringIso8601(xProperties->getModificationDate()),
+        dateTimeToStdStringPdfDate(xProperties->getCreationDate()),
+        dateTimeToStdStringPdfDate(xProperties->getModificationDate()),
         ouStringToStdString(xProperties->getGenerator()),
         ouStringToStdString(xProperties->getModifiedBy()),
         ouStringToStdString(xProperties->getDescription()),
